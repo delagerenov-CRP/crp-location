@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRP Delage Rénovation - Location de Matériel</title>
+  <style>
+    :root{
+      --primary:#8b5a2b;   /* marron */
+      --secondary:#d2b48c; /* beige */
+      --bg:#f5efe6;
+      --text:#3b2a1a;
+      --card:#ffffff;
+      --muted:#6b5a4a;
+      --border:#e7dccf;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family: Arial, sans-serif; background:var(--bg); color:var(--text); line-height:1.45; }
+    header{ background:var(--secondary); padding:20px; text-align:center; border-bottom:1px solid rgba(0,0,0,0.05); }
+    header img{ max-height:120px; margin-bottom:10px; }
+    nav{ background:var(--primary); padding:12px; text-align:center; position:sticky; top:0; z-index:50; }
+    nav a{ color:#fff; margin:0 12px; text-decoration:none; font-weight:700; }
+    nav a:hover{ text-decoration:underline; }
+    section{ padding:36px 16px; max-width:1120px; margin:0 auto; }
+
+    .hero{
+      background:var(--card);
+      padding:28px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      box-shadow:0 2px 8px rgba(0,0,0,0.06);
+      text-align:center;
+    }
+
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:center;
+      margin:18px 0 6px;
+    }
+    .toolbar input{
+      width:min(520px, 100%);
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #cfc3b6;
+      outline:none;
+      background:#fff;
+    }
+    .toolbar input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rgba(139,90,43,0.15); }
+
+    .filters{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:center;
+      margin-top:10px;
+    }
+
+    .btn{
+      background:var(--primary);
+      color:#fff;
+      border:none;
+      padding:10px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:700;
+      transition:transform .05s ease, background .15s ease;
+      line-height:1;
+    }
+    .btn:hover{ background:#6f4420; }
+    .btn:active{ transform:translateY(1px); }
+    .btn.secondary{
+      background:#fff;
+      color:var(--primary);
+      border:1px solid var(--border);
+    }
+    .btn.secondary:hover{ background:#fbf6ef; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap:16px;
+      margin-top:18px;
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      border:1px solid var(--border);
+      box-shadow:0 2px 8px rgba(0,0,0,0.06);
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height:100%;
+    }
+    .card h3{ margin:0; color:var(--primary); font-size:18px; }
+    .card p{ margin:0; color:var(--text); }
+    .card ul{ margin:0; padding-left:18px; color:var(--text); }
+    .meta{ color:var(--muted); font-size:13px; }
+
+    .price{
+      margin-top:auto;
+      padding-top:10px;
+      border-top:1px dashed var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .price strong{ font-size:15px; }
+
+    .thumb{
+      width:100%;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:#fff;
+      display:block;
+      max-height:190px;
+      object-fit:cover;
+    }
+    .thumb.rotate90{
+      object-fit:contain;
+      max-height:240px;
+      transform: rotate(90deg);
+      transform-origin:center;
+    }
+    .thumb.placeholder{
+      object-fit:contain;
+      padding:14px;
+      background:#fff;
+    }
+
+    .pill{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--primary);
+      font-weight:700;
+      font-size:12px;
+    }
+
+    .suggestions{
+      margin-top:10px;
+      border-top:1px solid var(--border);
+      padding-top:10px;
+      display:none;
+    }
+    .suggestions h4{ margin:0 0 8px; font-size:14px; color:var(--muted); }
+    .suggestions .sug-list{ display:flex; flex-wrap:wrap; gap:8px; }
+
+    .notice{
+      margin-top:14px;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:14px;
+      text-align:left;
+    }
+
+    form{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:16px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    }
+    form label{ display:block; font-weight:700; margin:12px 0 6px; }
+    form input, form textarea, form select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #cfc3b6;
+      outline:none;
+    }
+    form input:focus, form textarea:focus, form select:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rgba(139,90,43,0.15); }
+
+    .options-box{
+      display:none;
+      margin-top:10px;
+      background:#fbf6ef;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:12px;
+    }
+    .options-box .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .options-box .row input[type="number"]{ width:90px; }
+
+    #photo-dropzone.hover{
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139,90,43,0.15);
+      background: #fbf6ef;
+    }
+
+    .small{ font-size:13px; color:var(--muted); }
+
+    /* mini "éditeur" pour les items ajoutés via drag&drop */
+    .editor{
+      display:none;
+      margin-top:10px;
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+    }
+    .editor .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 720px){
+      .editor .grid2{ grid-template-columns: 1fr; }
+    }
+    .editor .rowbtns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+
+    footer{
+      background:var(--primary);
+      color:#fff;
+      text-align:center;
+      padding:18px;
+      margin-top:30px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="CRP Delage Rénovation" />
+    <h1 style="margin:0;">CRP Delage Rénovation</h1>
+    <p style="margin:6px 0 0;">Maçonnerie • Façade • Couverture</p>
+  </header>
+
+  <nav>
+    <a href="#accueil">Accueil</a>
+    <a href="#materiel">Matériel</a>
+    <a href="#reservation">Réservation</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <section id="accueil">
+    <div class="hero">
+      <h2 style="margin:0 0 6px;">Location de matériel pour vos chantiers</h2>
+      <p style="margin:0;">Outillage, équipements de chantier et matériel professionnel — fiables et accessibles.</p>
+
+      <div class="notice">
+        <div class="pill">Important</div>
+        <p style="margin:8px 0 0;">
+          Pour que les photos s’affichent : mets ce fichier <strong>index.html</strong> et toutes les images dans <strong>le même dossier</strong>.
+          Les noms d’images doivent être <strong>exactement</strong> ceux indiqués dans le site.
+        </p>
+        <p class="small" style="margin:8px 0 0;">
+          Astuce : évite les accents et les espaces dans les noms de fichiers (ex : <code>compresseur-kaeser-m26.jpg</code>).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="materiel">
+    <h2 style="margin:0;">Nos équipements</h2>
+
+    <div class="toolbar">
+      <input id="search" type="text" placeholder="Rechercher un matériel (ex : manitou, burineur, échafaudage, compresseur...)" oninput="applyFilters()" />
+      <button class="btn secondary" onclick="resetFilters()">Réinitialiser</button>
+    </div>
+
+    <div class="filters" aria-label="Filtres catégories">
+      <button class="btn" onclick="setCategory('all')">Tous</button>
+      <button class="btn" onclick="setCategory('levage')">Levage & Manutention</button>
+      <button class="btn" onclick="setCategory('gros-oeuvre')">Gros œuvre & Maçonnerie</button>
+      <button class="btn" onclick="setCategory('materiaux')">Matériaux</button>
+      <button class="btn" onclick="setCategory('outillage')">Outillage & Démolition</button>
+      <button class="btn" onclick="setCategory('energie')">Énergie & Chantier</button>
+      <button class="btn" onclick="setCategory('securite')">Sécurité & Accès</button>
+      <button class="btn" onclick="setCategory('sanitaire')">Sanitaire & Divers</button>
+    </div>
+
+  <div style="margin-top:12px; text-align:center;">
+  <button id="admin-toggle" class="btn secondary" type="button">
+    Ajouter / modifier des articles
+  </button>
+</div>
+<div id="admin-panel" style="display:none; margin:14px 0; padding:14px; border:1px solid var(--border); border-radius:12px; background:#fff;">
+
+  <div class="pill">Mode édition</div>
+
+  <p class="small" style="margin:8px 0 0;">
+    Pour ajouter ou modifier du matériel, ouvre directement le tableau Google Sheet.
+  </p>
+
+  <div style="margin-top:10px;">
+    <button class="btn secondary" onclick="window.open('https://docs.google.com/spreadsheets/d/1CVg8A_9byIvZ5R5YfgySHFeJYGtN_eHsetIaWndV03k','_blank')">
+      Ouvrir le tableau matériel
+    </button>
+  </div>
+
+</div>
+<div style="margin-top:12px; text-align:center;">
+  <button id="add-item-btn" class="btn" type="button">+ Ajouter un matériel</button>
+</div>
+
+<div id="add-item-form" style="display:none; margin:12px 0; padding:12px; border:1px solid var(--border); border-radius:12px; background:#fbf6ef;">
+  <div style="display:grid; gap:10px;">
+    <input id="f-title" type="text" placeholder="Titre (ex: Lève-palette)" />
+    <select id="f-cat">
+      <option value="levage">Levage & Manutention</option>
+      <option value="gros-oeuvre">Gros œuvre & Maçonnerie</option>
+      <option value="materiaux">Matériaux</option>
+      <option value="outillage">Outillage & Démolition</option>
+      <option value="energie">Énergie & Chantier</option>
+      <option value="securite">Sécurité & Accès</option>
+      <option value="sanitaire">Sanitaire & Divers</option>
+    </select>
+    <input id="f-price" type="number" step="0.01" placeholder="Prix / jour (vide = devis)" />
+    <input id="f-image" type="text" placeholder="Nom image (ex: leve-palette.jpg) (optionnel)" />
+    <textarea id="f-desc" rows="3" placeholder="Description (optionnel)"></textarea>
+    <textarea id="f-bullets" rows="3" placeholder="Puces (1 par ligne) (optionnel)"></textarea>
+    <input id="f-complements" type="text" placeholder="Compléments séparés par | (optionnel)" />
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button id="f-save" class="btn" type="button">Enregistrer dans Google Sheet</button>
+      <button id="f-cancel" class="btn secondary" type="button">Annuler</button>
+    </div>
+  </div>
+</div>
+    <div class="grid" id="materiel-grid"></div>
+
+    <p class="small" style="margin-top:14px;">
+      * « Location sur devis » : on vous rappelle pour le prix selon durée / transport / accessoires.
+    </p>
+  </section>
+
+  <section id="reservation">
+    <h2>Réservation</h2>
+
+    <form id="reservation-form">
+      <label for="nom">Nom complet</label>
+      <input type="text" id="nom" placeholder="Nom complet" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Email" required />
+
+      <label for="telephone">Téléphone</label>
+      <input type="tel" id="telephone" placeholder="Téléphone" required />
+
+      <label for="materielInput">Matériel sélectionné</label>
+      <input type="text" id="materielInput" placeholder="Cliquez sur “Réserver” dans une fiche matériel" readonly required />
+
+      <div id="options-container" class="options-box">
+        <div id="cloueur-options" style="display:none;">
+          <p style="margin:0 0 8px;"><strong>Options (Cloueur à gaz)</strong></p>
+          <div style="display:grid; gap:10px;">
+            <label><input type="radio" name="cloueurOption" value="none" checked /> Aucune option</label>
+            <div class="row">
+              <label style="margin:0;"><input type="radio" name="cloueurOption" value="gaz" /> Cartouche gaz (10 € / unité)</label>
+              <span>Qté</span>
+              <input type="number" id="qteGaz" min="1" value="1" />
+            </div>
+            <div class="row">
+              <label style="margin:0;"><input type="radio" name="cloueurOption" value="clous" /> Boîte de clous (15 € / boîte)</label>
+              <span>Qté</span>
+              <input type="number" id="qteClous" min="1" value="1" />
+            </div>
+            <label><input type="radio" name="cloueurOption" value="pack" /> Pack gaz + clous (22 €)</label>
+            <p class="small" style="margin:0;"><em>Caution : 300 €</em></p>
+          </div>
+        </div>
+
+        <div id="plateaux-options" style="display:none;">
+          <p style="margin:0 0 8px;"><strong>Options plateaux</strong></p>
+          <div style="display:grid; gap:10px;">
+            <div class="row">
+              <label style="margin:0;">Plateau aluminium (8 € / plateau)</label>
+              <span>Qté</span>
+              <input type="number" id="qteAlu" min="0" value="0" />
+            </div>
+            <div class="row">
+              <label style="margin:0;">Plateau acier (6 € / plateau)</label>
+              <span>Qté</span>
+              <input type="number" id="qteAcier" min="0" value="0" />
+            </div>
+            <div class="row">
+              <label style="margin:0;">Plateau réglable (10 € / plateau)</label>
+              <span>Qté</span>
+              <input type="number" id="qteReglable" min="0" value="0" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:8px;">
+        <div style="flex:1; min-width:240px;">
+          <label for="dateDebut">Date de début</label>
+          <input type="date" id="dateDebut" required />
+        </div>
+        <div style="flex:1; min-width:240px;">
+          <label for="dateFin">Date de fin</label>
+          <input type="date" id="dateFin" required />
+        </div>
+      </div>
+
+      <p id="prix-estime" style="font-weight:700; margin:14px 0 0;"></p>
+
+      <label for="infos">Informations complémentaires</label>
+      <textarea rows="4" id="infos" placeholder="Ex : besoin livraison, chantier, accessoires, horaires..."></textarea>
+
+      <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn" type="submit">Envoyer la réservation</button>
+        <button class="btn secondary" type="button" onclick="clearReservation()">Effacer</button>
+      </div>
+
+      <p class="small" style="margin:12px 0 0;">Ce formulaire prépare une demande. Vous serez recontacté pour confirmer la disponibilité.</p>
+    </form>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p><strong>Email :</strong> <a href="mailto:delage.renov@gmail.com">delage.renov@gmail.com</a></p>
+
+<p><strong>T�l�phone :</strong> <a href="tel:+33787098949">07 87 09 89 49</a></p>
+    <p><strong>Adresse :</strong> 2 impasse de la gare, 16320 EDON </p>
+  </section>
+
+  <footer>
+    <p style="margin:0;">© 2026 CRP Delage Rénovation — Tous droits réservés</p>
+  </footer>
+
+<script>
+
+let items = [];
+const API_URL = "https://script.google.com/macros/s/AKfycbwZubyLsk5D0Ht6UzteiEe4NShMVfn6mWml567UvO8WlNJbZRxhI0mu1fFnEnfoZmcVeg/exec";
+const ADMIN_TOKEN = "crp-location-2026";
+function normalizeCategory(cat){
+  const c = (cat || "").toString().trim().toLowerCase();
+
+  if (c.includes("levage")) return "levage";
+  if (c.includes("gros")) return "gros-oeuvre";
+  if (c.includes("mat")) return "materiaux";
+  if (c.includes("outil") || c.includes("démol") || c.includes("demol")) return "outillage";
+  if (c.includes("énergie") || c.includes("energie") || c.includes("chantier")) return "energie";
+  if (c.includes("sécur") || c.includes("secur") || c.includes("accès") || c.includes("acces")) return "securite";
+  if (c.includes("sanit") || c.includes("divers")) return "sanitaire";
+
+  return "sanitaire"; // défaut
+}
+async function loadFromAPI() {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
+
+    const fromSheet = data.materiel || [];
+
+    items.length = 0;
+
+   fromSheet.forEach((row) => {
+  const bullets = [row.puce1, row.puce2, row.puce3, row.puce4, row.puce5]
+    .map(v => (v || "").trim())
+    .filter(Boolean);
+
+  items.push({
+    id: row.id || "",
+    category: normalizeCategory(row.categorie || "sanitaire"),
+    name: (row.nom || row.titre || "Sans nom").trim(),
+    title: (row.titre || row.nom || "Sans titre").trim(),
+    desc: (row.description || "").trim(),
+    img: (row.image || "").trim(),        // ex: "mrt2150.jpg"
+    imgClass: (row.imgClass || "").trim(),// ex: "rotate90" si besoin
+    price: row.prixJour !== "" && row.prixJour != null ? Number(row.prixJour) : null,
+    bullets: bullets,
+   complements: Array.isArray(row.complements)
+  ? row.complements.map(s => String(s).trim()).filter(Boolean)
+  : String(row.complements || "")
+      .split("|")
+      .map(s => s.trim())
+      .filter(Boolean),
+  });
+});
+async function saveToSheet(item){
+  const payload = {
+    token: ADMIN_TOKEN,
+    action: "append",
+    item
+  };
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  });
+
+  const out = await res.json().catch(() => ({}));
+  if(!res.ok || out.ok === false){
+    throw new Error(out.error || `Erreur API (HTTP ${res.status})`);
+  }
+  return out;
+}
+    renderCards();
+
+  } catch (e) {
+    console.error("Erreur API :", e);
+  }
+}
+// =========================
+// AJOUT D'ARTICLE → Google Sheet (POST)
+// =========================
+
+async function saveToSheet(item){
+  const payload = {
+    action: "append",
+    token: ADMIN_TOKEN,
+    item
+  };
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  });
+
+  const out = await res.json().catch(() => ({}));
+  if(!res.ok || out.ok === false){
+    throw new Error(out.error || `Erreur API (HTTP ${res.status})`);
+  }
+  return out;
+}
+
+function slugifyId(s){
+  return (s || "")
+    .toString()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, "et")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 80);
+}
+function setupAddItemUI(){
+  const btn = document.getElementById("add-item-btn");
+  const box = document.getElementById("add-item-form");
+  const cancel = document.getElementById("f-cancel");
+  const save = document.getElementById("f-save");
+
+  if(!btn || !box || !cancel || !save){
+    console.warn("UI ajout matériel introuvable (IDs manquants)");
+    return;
+  }
+
+  btn.addEventListener("click", () => {
+    box.style.display = (box.style.display === "block") ? "none" : "block";
+  });
+
+  cancel.addEventListener("click", () => {
+    box.style.display = "none";
+  });
+
+  save.addEventListener("click", async () => {
+    const title = (document.getElementById("f-title").value || "").trim();
+    if(!title) return alert("Titre obligatoire");
+
+    const categorie = document.getElementById("f-cat").value;
+    const priceStr = (document.getElementById("f-price").value || "").trim();
+    const prixJour = priceStr === "" ? "" : Number(priceStr);
+
+    const image = (document.getElementById("f-image").value || "").trim();
+    const description = (document.getElementById("f-desc").value || "").trim();
+
+    const bullets = (document.getElementById("f-bullets").value || "")
+      .split("\n").map(s => s.trim()).filter(Boolean);
+
+    const complements = (document.getElementById("f-complements").value || "")
+      .split("|").map(s => s.trim()).filter(Boolean);
+
+    const item = {
+      id: slugifyId(title),
+      categorie,
+      nom: title,
+      titre: title,
+      description,
+      prixJour: (typeof prixJour === "number" && Number.isFinite(prixJour)) ? prixJour : "",
+      image,
+      imgClass: "",
+      complements: complements.join(" | "),
+      puce1: bullets[0] || "",
+      puce2: bullets[1] || "",
+      puce3: bullets[2] || "",
+      puce4: bullets[3] || "",
+      puce5: bullets[4] || ""
+    };
+
+    try{
+      save.disabled = true;
+      save.textContent = "Enregistrement...";
+      await saveToSheet(item);
+      await loadFromAPI();
+      box.style.display = "none";
+      alert("Ajouté ✅");
+    }catch(e){
+      console.error(e);
+      alert("Erreur : " + e.message);
+    }finally{
+      save.disabled = false;
+      save.textContent = "Enregistrer dans Google Sheet";
+    }
+  });
+}
+function setupAddItemUI(){
+  const btn = document.getElementById("add-item-btn");
+  const box = document.getElementById("add-item-form");
+  const cancel = document.getElementById("f-cancel");
+  const save = document.getElementById("f-save");
+
+  if(!btn || !box || !cancel || !save) return;
+
+  btn.addEventListener("click", () => {
+    box.style.display = (box.style.display === "block") ? "none" : "block";
+  });
+
+  cancel.addEventListener("click", () => {
+    box.style.display = "none";
+  });
+
+  save.addEventListener("click", async () => {
+    const title = (document.getElementById("f-title").value || "").trim();
+    if(!title) return alert("Titre obligatoire");
+
+    const categorie = document.getElementById("f-cat").value;
+    const priceStr = (document.getElementById("f-price").value || "").trim();
+    const prixJour = priceStr === "" ? "" : Number(priceStr);
+
+    const image = (document.getElementById("f-image").value || "").trim();
+    const description = (document.getElementById("f-desc").value || "").trim();
+
+    const bullets = (document.getElementById("f-bullets").value || "")
+      .split("\n").map(s => s.trim()).filter(Boolean);
+
+    const complements = (document.getElementById("f-complements").value || "")
+      .split("|").map(s => s.trim()).filter(Boolean);
+
+    const item = {
+      id: slugifyId(title),
+      categorie,
+      nom: title,
+      titre: title,
+      description,
+      prixJour: (typeof prixJour === "number" && Number.isFinite(prixJour)) ? prixJour : "",
+      image,
+      imgClass: "",
+      complements: complements.join(" | "),
+      puce1: bullets[0] || "",
+      puce2: bullets[1] || "",
+      puce3: bullets[2] || "",
+      puce4: bullets[3] || "",
+      puce5: bullets[4] || ""
+    };
+
+    try{
+      save.disabled = true;
+      save.textContent = "Enregistrement...";
+      await saveToSheet(item);
+      await loadFromAPI();
+      box.style.display = "none";
+      alert("Ajouté ✅");
+    }catch(e){
+      console.error(e);
+      alert("Erreur : " + e.message);
+    }finally{
+      save.disabled = false;
+      save.textContent = "Enregistrer dans Google Sheet";
+    }
+  });
+}
+function getAdminEls(){
+  return {
+    toggle: document.getElementById('admin-toggle'),
+    panel: document.getElementById('admin-panel'),
+    save: document.getElementById('admin-save'),
+    cancel: document.getElementById('admin-cancel'),
+    newBtn: document.getElementById('admin-new'),
+    id: document.getElementById('a-id'),
+    title: document.getElementById('a-title'),
+    category: document.getElementById('a-category'),
+    price: document.getElementById('a-price'),
+    image: document.getElementById('a-image'),
+    desc: document.getElementById('a-desc'),
+    bullets: document.getElementById('a-bullets'),
+    complements: document.getElementById('a-complements'),
+  };
+}
+
+function slugifyId(s){
+  return (s || '')
+    .toString()
+    .normalize('NFD')
+    .replace(/[?-?]/g, '')
+    .toLowerCase()
+    .replace(/&/g, 'et')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 80);
+}
+
+function setupAdminUI(){
+  const el = getAdminEls();
+  if(!el.toggle || !el.panel) return;
+
+  el.toggle.addEventListener('click', () => {
+    const on = el.panel.style.display !== 'block';
+    el.panel.style.display = on ? 'block' : 'none';
+    el.toggle.textContent = on ? 'D�sactiver le mode �dition' : 'Activer le mode �dition';
+  });
+
+  el.cancel && el.cancel.addEventListener('click', () => {
+    el.panel.style.display = 'none';
+    el.toggle.textContent = 'Activer le mode �dition';
+  });
+
+  el.newBtn && el.newBtn.addEventListener('click', () => {
+    el.id.value = '';
+    el.title.value = '';
+    el.price.value = '';
+    el.image.value = '';
+    el.desc.value = '';
+    el.bullets.value = '';
+    el.complements.value = '';
+    el.category.value = 'gros-oeuvre';
+  });
+
+  el.save && el.save.addEventListener('click', async () => {
+    const title = (el.title.value || '').trim();
+    if(!title) return alert('Titre obligatoire');
+
+    const id = (el.id.value || '').trim() || slugifyId(title);
+    const category = el.category.value;
+    const price = el.price.value !== '' ? Number(el.price.value) : null;
+    const img = (el.image.value || '').trim();
+    const desc = (el.desc.value || '').trim();
+    const bullets = (el.bullets.value || '').split('\n').map(s => s.trim()).filter(Boolean);
+    const complements = (el.complements.value || '').split('|').map(s => s.trim()).filter(Boolean);
+
+    // ? Objet au format de ton Apps Script (colonnes du Sheet)
+    const item = {
+      id,
+      categorie: category,
+      nom: title,
+      titre: title,
+      description: desc,
+      prixJour: (price === null || Number.isNaN(price)) ? '' : price,
+      image: img,
+      imgClass: '',
+      complements: complements.join(' | '),
+      puce1: bullets[0] || '',
+      puce2: bullets[1] || '',
+      puce3: bullets[2] || '',
+      puce4: bullets[3] || '',
+      puce5: bullets[4] || ''
+    };
+
+    // ?? si tu as d�j� une fonction saveToSheet(item), elle sera utilis�e ici
+    if(typeof saveToSheet === 'function'){
+      await saveToSheet(item);
+      await loadFromAPI();
+      alert('Enregistr� ? (Google Sheet)');
+    }else{
+      // fallback : ajoute juste en local
+      upsertItem({
+        name: item.nom,
+        title: item.titre,
+        category: item.categorie,
+        desc: item.description,
+        img: item.image,
+        price: item.prixJour === '' ? null : Number(item.prixJour),
+        bullets,
+        complements
+      }, true);
+      renderCards();
+      alert('Enregistr� ? (local)');
+    }
+  });
+}
+document.addEventListener("DOMContentLoaded", () => {
+  setupAdminUI();
+  setupAddItemUI();  // ✅ AJOUTER CETTE LIGNE
+  loadFromAPI();
+});
+    // =========================
+    // 2) Prix / options
+    // =========================
+    const prixJour = {};
+    function syncPrixJour(){
+      for(const it of items){
+        if(typeof it.price === 'number') prixJour[it.name] = it.price;
+      }
+    }
+    syncPrixJour();
+
+    const cloueurOptions = { gaz: 10, clous: 15, pack: 22 };
+    const plateauxTarifs = { alu: 8, acier: 6, reglable: 10 };
+
+    // produits qui affichent l'option "plateaux"
+    const itemsWithPlateauxOptions = new Set([
+      'Tréteaux MACC','Tréteaux BATIMAC GALVA','TELESPLAN','Échafaudages'
+    ]);
+
+    // =========================
+    // 3) Utilitaires
+    // =========================
+    let currentCategory = 'all';
+
+    function safeText(s){ return (s ?? '').toString(); }
+    function escapeQuotes(s){ return safeText(s).replace(/'/g, "\\'"); }
+
+    function labelCategory(cat){
+      const map = {
+        'levage':'Levage & Manutention',
+        'gros-oeuvre':'Gros œuvre & Maçonnerie',
+        'materiaux':'Matériaux',
+        'outillage':'Outillage & Démolition',
+        'energie':'Énergie & Chantier',
+        'securite':'Sécurité & Accès',
+        'sanitaire':'Sanitaire & Divers'
+      };
+      return map[cat] || cat;
+    }
+
+    function getItemByName(name){ return items.find(i => i.name === name); }
+
+    // =========================
+    // 4) Suggestions automatiques (compléments)
+    // =========================
+    const keywordRules = [
+      { ifAny: ['manitou','mrt'], add: ['Treuil 3 tonnes','Nacelle couvreur','Bac CIPAL','Lève-palette','Pince à blocs'] },
+      { ifAny: ['treuil'], add: ['Manitou MRT 2150','Bac CIPAL','Lève-palette','Pince à blocs'] },
+      { ifAny: ['échafaud','echelle','toit','tréteau','telesplan'], add: ['TELESPLAN','Tréteaux MACC','Tréteaux BATIMAC GALVA','Échafaudages'] },
+      { ifAny: ['béton','vibr'], add: ['DALMAC','Aiguille vibrante','Plaque vibrante'] },
+      { ifAny: ['scie'], add: ['Groupe électrogène 4,2 kVA','Groupe électrogène 5,5 kVA'] },
+      { ifAny: ['piqueur','pneumatique','compresseur'], add: ['Compresseur KAESER M26','Marteau-piqueur pneumatique'] },
+      { ifAny: ['sablon','enduit','joint'], add: ['Pot à enduire SABLON','Compresseur KAESER M26'] },
+      { ifAny: ['bac'], add: ['Enrouleur tuyau'] },
+    ];
+
+    function buildAutoComplements(item){
+      const txt = `${item.name} ${item.title} ${item.desc} ${(item.bullets||[]).join(' ')}`.toLowerCase();
+      const out = new Set();
+
+      items
+        .filter(i => i.name !== item.name && i.category === item.category)
+        .slice(0, 2)
+        .forEach(i => out.add(i.name));
+
+      for(const rule of keywordRules){
+        if(rule.ifAny.some(k => txt.includes(k))){
+          rule.add.forEach(n => out.add(n));
+        }
+      }
+      out.delete(item.name);
+      return Array.from(out).filter(n => !!getItemByName(n));
+    }
+
+    function mergedComplements(item){
+      const manual = Array.isArray(item.complements) ? item.complements : [];
+      const auto = buildAutoComplements(item);
+      const merged = Array.from(new Set([...manual, ...auto]));
+      return merged.filter(n => n !== item.name && !!getItemByName(n));
+    }
+
+    // =========================
+    // 5) Rendering
+    // =========================
+    function renderCards(){
+      const grid = document.getElementById('materiel-grid');
+      grid.innerHTML = '';
+
+      const q = document.getElementById('search').value.trim().toLowerCase();
+
+      const filtered = items.filter(it => {
+        const matchCat = (currentCategory === 'all') || it.category === currentCategory;
+        const hay = (it.name + ' ' + it.title + ' ' + it.desc + ' ' + (it.bullets||[]).join(' ')).toLowerCase();
+        const matchText = !q || hay.includes(q);
+        return matchCat && matchText;
+      });
+
+      if(filtered.length === 0){
+        grid.innerHTML = `<div class="card"><h3>Aucun résultat</h3><p>Essaie un autre mot-clé ou réinitialise les filtres.</p></div>`;
+        return;
+      }
+
+      for(const it of filtered){
+        const imgHtml = buildImageHtml(it);
+
+        const bulletsHtml = (it.bullets && it.bullets.length)
+          ? `<ul>${it.bullets.map(b => `<li>${safeText(b)}</li>`).join('')}</ul>`
+          : '';
+
+        const tarif = (typeof it.price === 'number')
+          ? (it.priceText ? it.priceText : `${it.price} € / jour`)
+          : (it.priceText ? it.priceText : 'Location sur devis');
+
+        const badge = `<div class="meta"><span class="pill">${labelCategory(it.category)}</span></div>`;
+
+        const comps = mergedComplements(it);
+
+        const el = document.createElement('div');
+        el.className = 'card';
+        el.dataset.name = it.name;
+        el.dataset.category = it.category;
+        el.dataset.complements = comps.join(',');
+
+        el.innerHTML = `
+          ${badge}
+          ${imgHtml}
+          <h3>${safeText(it.title)}</h3>
+          <p>${safeText(it.desc || '')}</p>
+          ${bulletsHtml}
+          <div class="price">
+            <strong>Tarif : ${tarif}</strong>
+            <button class="btn" type="button" onclick="openReservation('${escapeQuotes(it.name)}')">Réserver</button>
+          </div>
+          <div class="suggestions"></div>
+        `;
+
+        grid.appendChild(el);
+      }
+    }
+
+    // =========================
+    // 6) Images : auto-détection robuste
+    // =========================
+    function slugifyFilename(s){
+      return (s || '')
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // supprime accents (fiable)
+        .toLowerCase()
+        .replace(/&/g, 'et')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    }
+
+    function placeholderDataUri(name){
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+        `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='600'>
+          <rect width='100%25' height='100%25' fill='white'/>
+          <text x='50%25' y='46%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='44' fill='%238b5a2b'>Photo à venir</text>
+          <text x='50%25' y='56%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='28' fill='%236b5a4a'>${safeText(name)}</text>
+        </svg>`
+      )}`;
+    }
+
+    function guessImageBase(item){
+      return slugifyFilename(item.name);
+    }
+
+    function handleImgError(imgEl, base, itemName){
+      // data-try = -1 => image explicite a échoué, on bascule sur auto-detect .jpg/.jpeg/.png/.webp
+      const exts = ['jpg','jpeg','png','webp'];
+      let idx = parseInt(imgEl.dataset.try || '0', 10);
+
+      if(idx < 0) idx = 0;
+      else idx = idx + 1;
+
+      if(idx < exts.length){
+        imgEl.dataset.try = String(idx);
+        imgEl.src = `${base}.${exts[idx]}`;
+        return;
+      }
+
+      imgEl.onerror = null;
+      imgEl.classList.add('placeholder');
+      imgEl.style.objectFit = 'contain';
+      imgEl.style.padding = '14px';
+      imgEl.src = placeholderDataUri(itemName);
+    }
+
+    function buildImageHtml(item){
+      const cls = `thumb ${item.imgClass ? item.imgClass : ''}`.trim();
+      const base = guessImageBase(item);
+
+      // 1) Si item.img = dataURL/blobURL/nomFichier => on tente, puis fallback auto
+      if(item.img){
+        return `<img class="${cls}" src="${item.img}" data-try="-1" onerror="handleImgError(this, '${base}', '${escapeQuotes(item.name)}')" alt="${safeText(item.title)}" />`;
+      }
+
+      // 2) Sinon auto-detect par nom (nom-article.jpg -> .jpeg -> .png -> .webp)
+      return `<img class="${cls}" src="${base}.jpg" data-try="0" onerror="handleImgError(this, '${base}', '${escapeQuotes(item.name)}')" alt="${safeText(item.title)}" />`;
+    }
+
+    // =========================
+    // 7) Ajout rapide (drag & drop) + persistance + éditeur
+    // =========================
+    const LS_KEY = 'crp_items_custom_v2';
+    const LS_IMG_PREFIX = 'crp_img_'; // stockage dataURL (pour afficher après reload)
+
+    function loadCustomItems(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if(!raw) return [];
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : [];
+      }catch(e){
+        return [];
+      }
+    }
+
+    function saveCustomItems(arr){
+      localStorage.setItem(LS_KEY, JSON.stringify(arr));
+    }
+
+    function saveImageData(name, dataUrl){
+      try{ localStorage.setItem(LS_IMG_PREFIX + name, dataUrl); }catch(e){}
+    }
+    function loadImageData(name){
+      try{ return localStorage.getItem(LS_IMG_PREFIX + name) || ''; }catch(e){ return ''; }
+    }
+    function deleteImageData(name){
+      try{ localStorage.removeItem(LS_IMG_PREFIX + name); }catch(e){}
+    }
+
+    function guessCategoryFromName(name){
+      const t = (name || '').toLowerCase();
+      if(t.includes('hilti') || t.includes('burineur') || t.includes('scie') || t.includes('cloueur') || t.includes('piqueur') || t.includes('marteau')) return 'outillage';
+      if(t.includes('groupe') || t.includes('electrog') || t.includes('compresseur') || t.includes('enrouleur')) return 'energie';
+      if(t.includes('echelle') || t.includes('echafaud') || t.includes('protege')) return 'securite';
+      if(t.includes('gravier') || t.includes('sable') || t.includes('big') || t.includes('bag') || t.includes('materiau')) return 'materiaux';
+      if(t.includes('manitou') || t.includes('treuil') || t.includes('palette') || t.includes('pince') || t.includes('nacelle')) return 'levage';
+      return 'gros-oeuvre';
+    }
+
+    function humanizeFromFilename(filename){
+      const base = (filename || '').replace(/\.[^.]+$/, '');
+      const words = base.split(/[-_]+/).filter(Boolean);
+      if(!words.length) return base;
+
+      const raw = words.join(' ');
+      return raw
+        .replace(/\bhilti\b/gi, 'HILTI')
+        .replace(/\bmacc\b/gi, 'MACC')
+        .replace(/\bavr\b/gi, 'AVR')
+        .replace(/\bte\b/gi, 'TE')
+        .replace(/\bmrt\b/gi, 'MRT')
+        .split(' ')
+        .map(w => w.length ? (w[0].toUpperCase() + w.slice(1)) : w)
+        .join(' ')
+        .replace(/Hilti/g,'HILTI')
+        .replace(/Macc/g,'MACC');
+    }
+
+    function upsertItem(newItem, persist=true){
+      const idx = items.findIndex(i => i.name === newItem.name);
+      if(idx >= 0){
+        items[idx] = { ...items[idx], ...newItem };
+      }else{
+        items.push(newItem);
+      }
+
+      // sync prix
+      syncPrixJour();
+
+      if(!persist) return;
+
+      const customs = loadCustomItems();
+      const j = customs.findIndex(i => i.name === newItem.name);
+      const clean = { ...newItem };
+
+      // si img = dataURL => on stocke séparément pour limiter le JSON (et compat)
+      if(clean.img && clean.img.startsWith('data:image/')){
+        saveImageData(clean.name, clean.img);
+        clean.img = '__DATA__';
+      }
+
+      if(j >= 0) customs[j] = { ...customs[j], ...clean };
+      else customs.push(clean);
+      saveCustomItems(customs);
+    }
+
+    function importCustomItemsIntoMemory(){
+      const customs = loadCustomItems();
+      for(const it of customs){
+        if(!it || !it.name) continue;
+        const already = items.some(x => x.name === it.name);
+        if(already) continue;
+
+        const restored = { ...it };
+        if(restored.img === '__DATA__'){
+          const dataUrl = loadImageData(restored.name);
+          restored.img = dataUrl || '';
+        }
+        items.push(restored);
+      }
+      syncPrixJour();
+    }
+
+    function exportCustomItems(){
+      const customs = loadCustomItems();
+      const blob = new Blob([JSON.stringify(customs, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'crp-items-custom.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function clearCustomItems(){
+      if(!confirm('Supprimer TOUS les articles ajoutés (sur ce navigateur) ?')) return;
+      const customs = loadCustomItems();
+      for(const it of customs){
+        if(it && it.name) deleteImageData(it.name);
+      }
+      localStorage.removeItem(LS_KEY);
+      location.reload();
+    }
+
+    async function handleFilesCreateItems(files){
+      const list = Array.from(files || []).filter(f => f && f.name);
+      if(list.length === 0) return;
+
+      const toDataURL = (file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ''));
+        reader.onerror = () => reject(new Error('read failed'));
+        reader.readAsDataURL(file);
+      });
+
+      for(const file of list){
+        const filename = file.name;
+        const name = humanizeFromFilename(filename);
+        const cat = guessCategoryFromName(name);
+
+        // dataURL => photo visible immédiatement + après reload (stockée localStorage)
+        let dataUrl = '';
+        try{ dataUrl = await toDataURL(file); }catch(e){ dataUrl = ''; }
+
+        upsertItem({
+          category: cat,
+          name,
+          title: name,
+          img: dataUrl || '', // si vide, fallback auto-detect via nom
+          desc: 'Ajouté automatiquement (à personnaliser).',
+          bullets: [],
+          price: null,
+          priceText: '',
+          complements: []
+        }, true);
+      }
+
+loadFromAPI();
+      refreshEditorList();
+      openEditor();
+
+      alert(
+        "Ajout terminé.\n\n" +
+        "✅ La photo s'affiche maintenant (stockée dans ce navigateur).\n" +
+        "⚠️ Pour que le site soit portable (autre Mac / autre navigateur), ajoute aussi les images dans le dossier du site avec un nom simple (ex : pince-a-blocs.jpg)."
+      );
+    }
+
+    function setupDropzone(){
+      const dz = document.getElementById('photo-dropzone');
+      const inp = document.getElementById('photo-input');
+      if(!dz || !inp) return;
+
+      dz.addEventListener('click', () => inp.click());
+      inp.addEventListener('change', () => handleFilesCreateItems(inp.files));
+
+      dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('hover'); });
+      dz.addEventListener('dragleave', () => dz.classList.remove('hover'));
+      dz.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dz.classList.remove('hover');
+        handleFilesCreateItems(e.dataTransfer.files);
+      });
+    }
+
+    // --- éditeur ---
+    function getCustomNames(){
+      // ceux qui viennent du localStorage
+      return loadCustomItems().map(x => x.name).filter(Boolean);
+    }
+
+    function openEditor(){
+      const ed = document.getElementById('quick-editor');
+      ed.style.display = 'block';
+    }
+
+    function refreshEditorList(){
+      const sel = document.getElementById('ed-item');
+      const names = getCustomNames();
+      sel.innerHTML = '';
+
+      if(names.length === 0){
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = '(aucun article ajouté)';
+        sel.appendChild(opt);
+        document.getElementById('quick-editor').style.display = 'none';
+        return;
+      }
+
+      for(const n of names){
+        const opt = document.createElement('option');
+        opt.value = n;
+        opt.textContent = n;
+        sel.appendChild(opt);
+      }
+      // charger le 1er
+      loadEditorFromSelected();
+      document.getElementById('quick-editor').style.display = 'block';
+    }
+
+    function loadEditorFromSelected(){
+      const name = document.getElementById('ed-item').value;
+      if(!name) return;
+
+      // trouver la version "mémoire"
+      const it = getItemByName(name);
+      if(!it) return;
+
+      document.getElementById('ed-category').value = it.category || 'gros-oeuvre';
+      document.getElementById('ed-price').value = (typeof it.price === 'number') ? String(it.price) : '';
+      document.getElementById('ed-priceText').value = it.priceText || '';
+      document.getElementById('ed-complements').value = Array.isArray(it.complements) ? it.complements.join(', ') : '';
+    }
+
+    async function saveEditor() {
+      const name = document.getElementById('ed-item').value;
+      if(!name) return;
+
+      const it = getItemByName(name);
+      if(!it) return;
+
+     const cat = document.getElementById('ed-category').value;
+const priceStr = document.getElementById('ed-price').value.trim();
+const priceText = document.getElementById('ed-priceText').value.trim();
+const complementsStr = document.getElementById('ed-complements').value.trim();
+
+const price = priceStr === '' ? null : Number(priceStr);
+
+const complements = String(complementsStr || "")
+  .split(",")
+  .map(s => s.trim())
+  .filter(Boolean);
+
+const desc = document.getElementById('ed-desc').value;
+
+upsertItem({
+  ...it,
+  category: cat,
+  price: Number.isFinite(price) ? price : null,
+  priceText: priceText,
+  complements: complements,
+  desc: desc,
+}, true);
+
+currentCategory = 'all';
+renderCards();
+alert('Enregistr� ?');
+    
+    }
+
+    function deleteSelectedCustom(){
+      const name = document.getElementById('ed-item').value;
+      if(!name) return;
+      if(!confirm(`Supprimer l'article ajouté : "${name}" ?`)) return;
+
+      // enlever du localStorage
+      const customs = loadCustomItems().filter(x => x && x.name !== name);
+      saveCustomItems(customs);
+      deleteImageData(name);
+
+      // enlever de la mémoire items
+      const idx = items.findIndex(i => i.name === name);
+      if(idx >= 0) items.splice(idx, 1);
+
+      renderCards();
+      refreshEditorList();
+    }
+
+    // =========================
+    // 8) Filtres + catégories
+    // =========================
+    function setCategory(cat){
+      currentCategory = cat;
+      applyFilters();
+    }
+
+    function applyFilters(){
+      renderCards();
+    }
+
+    function resetFilters(){
+      currentCategory = 'all';
+      document.getElementById('search').value = '';
+      renderCards();
+    }
+
+    // =========================
+    // 9) Réservation + options + prix estimé
+    // =========================
+    function openReservation(name){
+      const it = getItemByName(name);
+      document.getElementById('materielInput').value = name;
+
+      // afficher options
+      const optionsBox = document.getElementById('options-container');
+      const cloueur = document.getElementById('cloueur-options');
+      const plateaux = document.getElementById('plateaux-options');
+
+      cloueur.style.display = (name === 'Cloueur à gaz') ? 'block' : 'none';
+      plateaux.style.display = (itemsWithPlateauxOptions.has(name)) ? 'block' : 'none';
+
+      optionsBox.style.display = (cloueur.style.display === 'block' || plateaux.style.display === 'block') ? 'block' : 'none';
+
+      // focus section réservation
+      location.hash = '#reservation';
+
+      // calc
+      calculatePrice();
+
+      // suggestions visibles sur carte
+      showSuggestions(name);
+    }
+
+    function clearReservation(){
+      document.getElementById('reservation-form').reset();
+      document.getElementById('materielInput').value = '';
+      document.getElementById('prix-estime').textContent = '';
+      document.getElementById('options-container').style.display = 'none';
+      document.getElementById('cloueur-options').style.display = 'none';
+      document.getElementById('plateaux-options').style.display = 'none';
+    }
+
+    function daysBetween(d1, d2){
+      const a = new Date(d1);
+      const b = new Date(d2);
+      const ms = b - a;
+      if(!Number.isFinite(ms)) return 0;
+      const days = Math.ceil(ms / (1000*60*60*24)) + 1; // inclusif
+      return Math.max(0, days);
+    }
+
+    function calculatePrice(){
+      const name = document.getElementById('materielInput').value.trim();
+      const start = document.getElementById('dateDebut').value;
+      const end = document.getElementById('dateFin').value;
+
+      const out = document.getElementById('prix-estime');
+      if(!name || !start || !end){
+        out.textContent = '';
+        return;
+      }
+
+      const it = getItemByName(name);
+      const days = daysBetween(start, end);
+      if(days <= 0){
+        out.textContent = '⚠️ Dates invalides';
+        return;
+      }
+
+      // devis si pas de prix
+      const base = (typeof it?.price === 'number') ? it.price * days : null;
+
+      // options
+      let opt = 0;
+
+      if(name === 'Cloueur à gaz'){
+        const selected = document.querySelector('input[name="cloueurOption"]:checked')?.value || 'none';
+        if(selected === 'gaz'){
+          const q = parseInt(document.getElementById('qteGaz').value || '1', 10);
+          opt += (cloueurOptions.gaz * Math.max(1,q));
+        }else if(selected === 'clous'){
+          const q = parseInt(document.getElementById('qteClous').value || '1', 10);
+          opt += (cloueurOptions.clous * Math.max(1,q));
+        }else if(selected === 'pack'){
+          opt += cloueurOptions.pack;
+        }
+      }
+
+      if(itemsWithPlateauxOptions.has(name)){
+        const alu = parseInt(document.getElementById('qteAlu').value || '0', 10);
+        const acier = parseInt(document.getElementById('qteAcier').value || '0', 10);
+        const reg = parseInt(document.getElementById('qteReglable').value || '0', 10);
+        opt += plateauxTarifs.alu * Math.max(0, alu);
+        opt += plateauxTarifs.acier * Math.max(0, acier);
+        opt += plateauxTarifs.reglable * Math.max(0, reg);
+      }
+
+      if(base === null){
+        out.textContent = `Estimation : sur devis (durée ${days} jour(s))` + (opt ? ` + options ${opt.toFixed(2)} €` : '');
+      }else{
+        const total = base + opt;
+        out.textContent = `Estimation : ${total.toFixed(2)} € (durée ${days} jour(s))` + (opt ? ` — options incluses` : '');
+      }
+    }
+
+    // =========================
+    // 10) Suggestions UI (affichage)
+    // =========================
+    function showSuggestions(itemName){
+      document.querySelectorAll('.card .suggestions').forEach(s => {
+        s.style.display = 'none';
+        s.innerHTML = '';
+      });
+
+      const card = [...document.querySelectorAll('.card')].find(c => c.dataset && c.dataset.name === itemName);
+      if(!card) return;
+
+      const box = card.querySelector('.suggestions');
+      if(!box) return;
+
+      const comps = (card.dataset.complements || '').split(',').map(s => s.trim()).filter(Boolean).slice(0,8);
+      if(comps.length === 0) return;
+
+      box.style.display = 'block';
+      box.innerHTML = `
+        <h4>Compléments conseillés</h4>
+        <div class="sug-list">
+          ${comps.map(n => `<button class="btn secondary" type="button" onclick="openReservation('${escapeQuotes(n)}')">${safeText(n)}</button>`).join('')}
+        </div>
+      `;
+    }
+
+    // =========================
+    // 11) Envoi mail réservation
+    // =========================
+    document.getElementById('reservation-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const nom = document.getElementById('nom').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const telephone = document.getElementById('telephone').value.trim();
+      const materiel = document.getElementById('materielInput').value.trim();
+      const dateDebut = document.getElementById('dateDebut').value;
+      const dateFin = document.getElementById('dateFin').value;
+      const infos = document.getElementById('infos').value.trim();
+
+      let optionsTxt = '';
+
+      if(materiel === 'Cloueur à gaz'){
+        const selected = document.querySelector('input[name="cloueurOption"]:checked')?.value || 'none';
+        if(selected === 'gaz') optionsTxt = `Option cloueur : Cartouche gaz × ${document.getElementById('qteGaz').value || 1}`;
+        else if(selected === 'clous') optionsTxt = `Option cloueur : Boîte de clous × ${document.getElementById('qteClous').value || 1}`;
+        else if(selected === 'pack') optionsTxt = 'Option cloueur : Pack gaz + clous';
+      }
+
+      if(itemsWithPlateauxOptions.has(materiel)){
+        const alu = parseInt(document.getElementById('qteAlu').value || '0', 10);
+        const acier = parseInt(document.getElementById('qteAcier').value || '0', 10);
+        const reg = parseInt(document.getElementById('qteReglable').value || '0', 10);
+        const parts = [];
+        if(alu > 0) parts.push(`Plateau aluminium × ${alu}`);
+        if(acier > 0) parts.push(`Plateau acier × ${acier}`);
+        if(reg > 0) parts.push(`Plateau réglable × ${reg}`);
+        if(parts.length) optionsTxt = (optionsTxt ? optionsTxt + ' | ' : '') + 'Options plateaux : ' + parts.join(', ');
+      }
+
+      const estimation = document.getElementById('prix-estime').textContent.trim();
+      const subject = encodeURIComponent(`Demande de réservation – ${materiel || 'Matériel'}`);
+      const body = encodeURIComponent(
+        `Bonjour,\n\n` +
+        `Je souhaite réserver : ${materiel}\n` +
+        `Dates : ${dateDebut || '-'} → ${dateFin || '-'}\n\n` +
+        `Client : ${nom}\n` +
+        `Email : ${email}\n` +
+        `Téléphone : ${telephone}\n\n` +
+        `${optionsTxt ? optionsTxt + '\n' : ''}` +
+        `${estimation ? estimation + '\n' : ''}` +
+        `${infos ? '\nInfos complémentaires :\n' + infos + '\n' : ''}` +
+        `\nMerci.`
+      );
+
+      window.location.href = `mailto:contact@crp-delage.fr?subject=${subject}&body=${body}`;
+    });
+
+    // =========================
+    // 12) Listeners (prix auto + éditeur)
+    // =========================
+    document.addEventListener('input', (e) => {
+      const id = e.target?.id || '';
+      if(['dateDebut','dateFin','qteGaz','qteClous','qteAlu','qteAcier','qteReglable','materielInput'].includes(id)){
+        calculatePrice();
+      }
+      if(id === 'search'){
+        applyFilters();
+      }
+    });
+
+    document.addEventListener('change', (e) => {
+      if(e.target?.name === 'cloueurOption') calculatePrice();
+      if(e.target?.id === 'ed-item') loadEditorFromSelected();
+    });
+
+    // =========================
+    // 13) Init
+    // =========================
+    document.addEventListener('DOMContentLoaded', () => {
+      importCustomItemsIntoMemory();
+      setupDropzone();
+      renderCards();
+      refreshEditorList();
+    });
+
+    // Expose (pour onclick HTML)
+    window.setCategory = setCategory;
+    window.applyFilters = applyFilters;
+    window.resetFilters = resetFilters;
+    window.openReservation = openReservation;
+    window.clearReservation = clearReservation;
+    window.calculatePrice = calculatePrice;
+    window.showSuggestions = showSuggestions;
+    window.exportCustomItems = exportCustomItems;
+    window.clearCustomItems = clearCustomItems;
+    window.saveEditor = saveEditor;
+    window.deleteSelectedCustom = deleteSelectedCustom;
+
+ 
+  document.addEventListener("DOMContentLoaded", function () {
+  const btn = document.getElementById("admin-toggle");
+  const panel = document.getElementById("admin-panel");
+
+  if (!btn || !panel) return;
+
+  btn.addEventListener("click", function () {
+    const open = panel.style.display === "block";
+    panel.style.display = open ? "none" : "block";
+    btn.textContent = open ? "Ajouter / modifier des articles" : "Fermer le mode édition";
+  });
+});
+  </script>
+const API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrStfVqq9p1Mfwa2zWmMSfmH1BEbuDtxH7eJOTLhzOzKdxdUEVFjjqmqz1vrgLmXpJwRC_fSD6OQCBnWPui7IZt8bSma750eSa6ltWJDekuELm4dONleRUk5m69ltk-BLSkttxYq6UxF7a_ZxUWPKA8jfDEelKyazL_sTel32Eq_0kEDnoEQ7vBMKMuPLR_1mQt_-cWuYpWxyznjEYtsZbIOUmVCU0lV3J503jO0G9lSpChe6BtEO0NjKEd_JGIfwCEsrrJAZp4_gysuiKlFvLe7YD8DoGUep9vuUJjz&lib=MyL8xEK2xDv6uSYmq-ejSTsj4fO5k8s1s";
+
+}
+
+</body>
+</html>
