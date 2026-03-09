@@ -460,56 +460,40 @@ async function loadFromAPI() {
     const data = await res.json();
 
     const fromSheet = data.materiel || [];
-
     items.length = 0;
 
-   fromSheet.forEach((row) => {
-  const bullets = [row.puce1, row.puce2, row.puce3, row.puce4, row.puce5]
-    .map(v => String (v || "").trim())
-    .filter(Boolean);
+    fromSheet.forEach((row) => {
+      const bullets = [row.puce1, row.puce2, row.puce3, row.puce4, row.puce5]
+        .map(v => String(v || "").trim())
+        .filter(Boolean);
 
-  items.push({
-    id: row.id || "",
-    category: normalizeCategory(row.categorie || "sanitaire"),
-    name: String(row.nom || row.titre || "Sans nom").trim(),
-title: String(row.titre || row.nom || "Sans titre").trim(),
-desc: String(row.description || "").trim(),
-img: String(row.image || "").trim(),
-imgClass: String(row.imgClass || "").trim(),
-    price: row.prixJour !== "" && row.prixJour != null ? Number(row.prixJour) : null,
-    bullets: bullets,
-   complements: Array.isArray(row.complements)
-  ? row.complements.map(s => String(s).trim()).filter(Boolean)
-  : String(row.complements || "")
-      .split("|")
-      .map(s => s.trim())
-      .filter(Boolean),
-  });
-});
-async function saveToSheet(item){
-  const payload = {
-    token: ADMIN_TOKEN,
-    action: "append",
-    item
-  };
+      items.push({
+        id: String(row.id || "").trim(),
+        category: normalizeCategory(String(row.categorie || "sanitaire").trim()),
+        name: String(row.nom || row.titre || "Sans nom").trim(),
+        title: String(row.titre || row.nom || "Sans titre").trim(),
+        desc: String(row.description || "").trim(),
+        img: String(row.image || "").trim(),
+        imgClass: String(row.imgClass || "").trim(),
+        priceText: String(row.priceText || row.prixTexte || "").trim(),
+        price: row.prixJour !== "" && row.prixJour != null ? Number(row.prixJour) : null,
+        bullets: bullets,
+        complements: Array.isArray(row.complements)
+          ? row.complements.map(s => String(s).trim()).filter(Boolean)
+          : String(row.complements || "")
+              .split("|")
+              .map(s => s.trim())
+              .filter(Boolean),
+      });
+    });
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(payload)
-  });
-
-  const out = await res.json().catch(() => ({}));
-  if(!res.ok || out.ok === false){
-    throw new Error(out.error || `Erreur API (HTTP ${res.status})`);
-  }
-  return out;
-}
-    renderCards();
+    const customs = loadCustomItems();
+    customs.forEach(it => items.push(it));
 
   } catch (e) {
     console.error("Erreur API :", e);
   }
+
 }
 // =========================
 // AJOUT D'ARTICLE → Google Sheet (POST)
