@@ -430,6 +430,14 @@
 
 <script>
 
+  function normalizeImageName(name){
+  return name
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9]+/g,"-")
+    .replace(/(^-|-$)/g,"") + ".png";
+}
+
 let items = [];
 const API_URL = "https://script.google.com/macros/s/AKfycbwZubyLsk5D0Ht6UzteiEe4NShMVfn6mWml567UvO8WlNJbZRxhI0mu1fFnEnfoZmcVeg/exec";
 const ADMIN_TOKEN = "crp-location-2026";
@@ -1143,7 +1151,7 @@ document.addEventListener("DOMContentLoaded", () => {
           category: cat,
           name,
           title: name,
-          img: filename,
+          img: normalizeImageName(name),
           desc: 'Ajouté automatiquement (à personnaliser).',
           bullets: [],
           price: null,
