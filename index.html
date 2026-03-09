@@ -442,7 +442,7 @@ let items = [];
 const API_URL = "https://script.google.com/macros/s/AKfycbwZubyLsk5D0Ht6UzteiEe4NShMVfn6mWml567UvO8WlNJbZRxhI0mu1fFnEnfoZmcVeg/exec";
 const ADMIN_TOKEN = "crp-location-2026";
 function normalizeCategory(cat){
-  const c = (cat || "").toString().trim().toLowerCase();
+  const c = String(cat || "").toString().trim().toLowerCase();
 
   if (c.includes("levage")) return "levage";
   if (c.includes("gros")) return "gros-oeuvre";
@@ -465,17 +465,17 @@ async function loadFromAPI() {
 
    fromSheet.forEach((row) => {
   const bullets = [row.puce1, row.puce2, row.puce3, row.puce4, row.puce5]
-    .map(v => (v || "").trim())
+    .map(v => String (v || "").trim())
     .filter(Boolean);
 
   items.push({
     id: row.id || "",
     category: normalizeCategory(row.categorie || "sanitaire"),
-    name: (row.nom || row.titre || "Sans nom").trim(),
-    title: (row.titre || row.nom || "Sans titre").trim(),
-    desc: (row.description || "").trim(),
-    img: (row.image || "").trim(),        // ex: "mrt2150.jpg"
-    imgClass: (row.imgClass || "").trim(),// ex: "rotate90" si besoin
+    name: String(row.nom || row.titre || "Sans nom").trim(),
+title: String(row.titre || row.nom || "Sans titre").trim(),
+desc: String(row.description || "").trim(),
+img: String(row.image || "").trim(),
+imgClass: String(row.imgClass || "").trim(),
     price: row.prixJour !== "" && row.prixJour != null ? Number(row.prixJour) : null,
     bullets: bullets,
    complements: Array.isArray(row.complements)
